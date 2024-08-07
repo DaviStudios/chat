@@ -6,53 +6,96 @@
     <title>Noahh Chat</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
+            background-color: #FFF5EB;
+            color: #4A4A4A;
         }
-        #chat-c {
-            border: 1px solid #ccc;
+        h1 {
+            color: #E67E22;
+            text-align: center;
+        }
+        #chatc {
+            border: 2px solid #E67E22;
+            border-radius: 8px;
             height: 400px;
             overflow-y: scroll;
             margin-bottom: 20px;
-            padding: 10px;
+            padding: 15px;
+            background-color: white;
         }
-        #msg-f {
+        #msgf {
             display: flex;
         }
-        #msg-i {
+        #msgi {
             flex-grow: 1;
             margin-right: 10px;
+            padding: 10px;
+            border: 1px solid #E67E22;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #E67E22;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #D35400;
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        #userc {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        #useri {
+            padding: 10px;
+            border: 1px solid #E67E22;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        .message {
+            margin-bottom: 10px;
+            padding: 8px;
+            background-color: #FFF0E0;
+            border-radius: 4px;
         }
     </style>
 </head>
 <body>
     <h1>Noahh Chat</h1>
-    <div id="user-c">
-        <input type="text" id="user-i" placeholder="Enter your username">
-        <button id="j-c">Join Chat</button>
+    <div id="userc">
+        <input type="text" id="useri" placeholder="Enter your username">
+        <button id="jcb">Join Chat</button>
     </div>
-    <div id="chat-c"></div>
-    <form id="msg-f">
-        <input type="text" id="msg-i" placeholder="Type your message" disabled>
+    <div id="chatc"></div>
+    <form id="msgf">
+        <input type="text" id="msgi" placeholder="Type your message" disabled>
         <button type="submit" disabled>Send</button>
     </form>
 
     <script>
-        const chatc = document.getElementById('chat-c');
-        const msgf = document.getElementById('msg-f');
-        const msgi = document.getElementById('msg-i');
-        const useri = document.getElementById('user-i');
-        const jcb = document.getElementById('j-c');
+        const chatc = document.getElementById('chatc');
+        const msgf = document.getElementById('msgf');
+        const msgi = document.getElementById('msgi');
+        const useri = document.getElementById('useri');
+        const jcb = document.getElementById('jcb');
 
         let username = '';
         let socket;
 
         jcb.addEventListener('click', () => {
             username = useri.value.trim();
-            if (username) {
-                document.getElementById('user-c').style.display = 'none';
+            if (username && !['noahh', 'david', 'admin'].includes(username.toLowerCase())) {
+                document.getElementById('userc').style.display = 'none';
                 msgi.disabled = false;
                 msgf.querySelector('button').disabled = false;
                 
@@ -71,6 +114,10 @@
                 socket.addEventListener('close', () => {
                     addmsg('System', 'Disconnected from chat');
                 });
+
+                socket.addEventListener('used', () => {
+                    addmsg('System', 'This username is in use, reload the page, please.');
+                });
             }
         });
 
@@ -85,6 +132,7 @@
 
         function addmsg(username, message) {
             const msge = document.createElement('div');
+            msge.className = 'message';
             msge.textContent = `${username}: ${message}`;
             chatc.appendChild(msge);
             chatc.scrollTop = chatc.scrollHeight;
